@@ -40,6 +40,11 @@
           <input class="phone_number" name="phone_number" type="tel">
         </label>
 
+        <label>
+          Tags:
+          <input class="tags" name="tags" type="text">
+        </label>
+
         <input type="hidden" name="id" id="editId">
         <button type="submit">Submit</button>
         <button id="cancel" type="reset">Cancel</button>
@@ -64,8 +69,16 @@
     <p><span class="phone_number">{{phone_number}}</span></p>
     </div>
     <div class="email">
-      <p><strong>Email:</strong><p>
+      <p><strong>Email:</strong></p>
       <p><span class="email">{{email}}</span></p>
+    </div>
+    <div class="tags">
+      {{#if tags}}
+      <p><strong>Tags:</strong></p>
+      <p class="tags">{{#each tags}}
+      <button class="tag">{{this}}</button>
+      {{/each}}</p>
+      {{/if}}
     </div>
     <button class="edit">Edit</button>
     <button class="delete">Delete</button>

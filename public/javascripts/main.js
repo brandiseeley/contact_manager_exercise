@@ -24,6 +24,11 @@ const DOM = (function() {
   //       DOM shouldn't be async
   async function renderContacts() {
     let contacts = await ContactManager.allContacts();
+    contacts.forEach(contact => {
+      if (contact.tags) {
+        contact.tags = contact.tags.split(',');
+      }
+    });
 
     // TODO: Use handlebars partial instead of looping through contacts.
     let contactDiv = document.querySelector('#contacts');
@@ -68,10 +73,13 @@ const Handlers = (function() {
     let name = contactDiv.querySelector('.full_name').textContent;
     let phone = contactDiv.querySelector('span.phone_number').textContent;
     let email = contactDiv.querySelector('span.email').textContent;
+    let tagElements = Array.from(contactDiv.querySelectorAll('div.tags .tag'));
+    let tags = tagElements.map(tag => tag.textContent).join(', ');
     let id = contactDiv.dataset.id;
     editForm.querySelector('.full_name').value = name;
     editForm.querySelector('.phone_number').value = phone;
     editForm.querySelector('.email').value = email;
+    editForm.querySelector('.tags').value = tags;
     editForm.querySelector('#editId').setAttribute('value', id);
     showEditContactForm();
   }

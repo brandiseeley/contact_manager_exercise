@@ -75,6 +75,10 @@ h3 {
   padding: 20px 0;
 }
 
+p {
+  padding-top: 2px;
+}
+
 input {
   padding: 5px;
   margin: 5px;
@@ -101,6 +105,15 @@ button:hover {
 strong {
   font-weight: 600;
   font-size: 18px;
+}
+
+.tag {
+  border: 1px solid lightcoral;
+  background-color: lightgray;
+}
+
+p.tags {
+  margin-top: 10px;
 }
 
 div.contact {
