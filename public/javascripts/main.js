@@ -27,25 +27,17 @@ const DOM = (function() {
 
     // TODO: Use handlebars partial instead of looping through contacts.
     let contactDiv = document.querySelector('#contacts');
+    contactDiv.innerHTML = '';
     contacts.forEach(contact => {
       let html = Templater.contact(contact);
       contactDiv.insertAdjacentHTML('beforeend', html);
     });
   }
 
-  // TODO: Should we add to the end, or rerender
-  //       to properly sort contacts?
-  function renderContact(contact) {
-    let html = Templater.contact(contact);
-    let contactDiv = document.querySelector('#contacts');
-    contactDiv.insertAdjacentHTML('beforeend', html);
-  }
-
   function parseForm(form) {
     let object = {};
 
     for (let element of form.elements) {
-      console.log(element);
       if (element.type !== 'submit' && element.type !== 'reset') {
         object[element.name] = element.value;
       }
@@ -55,7 +47,6 @@ const DOM = (function() {
 
   return {
     renderContacts,
-    renderContact,
     parseForm,
   };
 })();
@@ -66,14 +57,38 @@ const Handlers = (function() {
     return contactDiv.dataset.id;
   }
 
+  function showEditContactForm() {
+    document.querySelector('h2.contactForm').textContent = 'Edit Contact';
+    document.querySelector('#contactFormWrapper').style.display = 'block';
+
+  }
+
+  function displayEditContact(contactDiv) {
+    let editForm = document.querySelector('#contactForm');
+    let name = contactDiv.querySelector('.full_name').textContent;
+    let phone = contactDiv.querySelector('.phone_number').textContent;
+    let email = contactDiv.querySelector('.email').textContent;
+    let id = contactDiv.dataset.id;
+    editForm.querySelector('.full_name').value = name;
+    editForm.querySelector('.phone_number').value = phone;
+    editForm.querySelector('.email').value = email;
+    editForm.querySelector('#editId').setAttribute('value', id);
+    showEditContactForm();
+  }
+
   // Public
-  async function newContact(event) {
+  async function addOrEditContact(event) {
     event.preventDefault();
     let form = document.querySelector('#contactForm');
-    let newContactData = DOM.parseForm(form);
-    console.log(newContactData);
-    let addedContactData = await ContactManager.addContact(newContactData);
-    DOM.renderContact(addedContactData);
+    let contactData = DOM.parseForm(form);
+
+    // TODO: Do we need to capture the response anymore?
+    let newContactData = await ContactManager.addOrEditContact(contactData);
+
+    // TODO: Rerender all contacts any time we update or delete
+    //       Too complicated to add and update dynamically
+
+    DOM.renderContacts();
     form.reset();
     hideContactForm();
   }
@@ -83,9 +98,10 @@ const Handlers = (function() {
     let contactDiv = event.target.closest('div');
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
-      console.log('deleting');
       ContactManager.deleteContact(id);
       contactDiv.remove();
+    } else {
+      displayEditContact(contactDiv);
     }
   }
 
@@ -96,11 +112,11 @@ const Handlers = (function() {
 
   function hideContactForm() {
     document.querySelector('#contactFormWrapper').style.display = 'none';
-    document.querySelector('#h2.contactForm').textContent = '';
+    document.querySelector('h2.contactForm').textContent = '';
   }
 
   return {
-    newContact,
+    addOrEditContact,
     editOrDelete,
     showAddContactForm,
     hideContactForm,
@@ -115,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   DOM.renderContacts();
 
-  newContactForm.addEventListener('submit', Handlers.newContact);
+  newContactForm.addEventListener('submit', Handlers.addOrEditContact);
   contacts.addEventListener('click', Handlers.editOrDelete);
   addContactButton.addEventListener('click', Handlers.showAddContactForm);
   cancelButton.addEventListener('click', Handlers.hideContactForm);

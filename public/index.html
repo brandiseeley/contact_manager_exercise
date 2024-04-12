@@ -27,19 +27,20 @@
         <h2 class="contactForm"></h2>
         <label>
           Full name:
-          <input name="full_name" type="text">
+          <input class="full_name" name="full_name" type="text">
         </label>
 
         <label>
           Email address:
-          <input name="email" type="email">
+          <input class="email" name="email" type="email">
         </label>
 
         <label>
           Telephone number:
-          <input name="phone_number" type="tel">
+          <input class="phone_number" name="phone_number" type="tel">
         </label>
 
+        <input type="hidden" name="id" id="editId">
         <button type="submit">Submit</button>
         <button id="cancel" type="reset">Cancel</button>
       </form>
@@ -57,9 +58,9 @@
 <!-- Templates -->
 <script id="contactTemplate" type="text/x-handlebars">
   <div data-id="{{id}}" id="contact{{id}}">
-    <h3>{{full_name}}</h3>
-    <p><strong>Phone Number:</strong>{{phone_number}}</p>
-    <p><strong>Email:</strong>{{email}}</p>
+    <h3 class="full_name">{{full_name}}</h3>
+    <p><strong>Phone Number:</strong><span class="phone_number">{{phone_number}}</span></p>
+    <p><strong>Email:</strong><span class="email">{{email}}</span></p>
     <button class="edit">Edit</button>
     <button class="delete">Delete</button>
   </div>
