@@ -66,8 +66,8 @@ const Handlers = (function() {
   function displayEditContact(contactDiv) {
     let editForm = document.querySelector('#contactForm');
     let name = contactDiv.querySelector('.full_name').textContent;
-    let phone = contactDiv.querySelector('.phone_number').textContent;
-    let email = contactDiv.querySelector('.email').textContent;
+    let phone = contactDiv.querySelector('span.phone_number').textContent;
+    let email = contactDiv.querySelector('span.email').textContent;
     let id = contactDiv.dataset.id;
     editForm.querySelector('.full_name').value = name;
     editForm.querySelector('.phone_number').value = phone;

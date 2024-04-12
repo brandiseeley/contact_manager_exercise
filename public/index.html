@@ -57,10 +57,16 @@
 
 <!-- Templates -->
 <script id="contactTemplate" type="text/x-handlebars">
-  <div data-id="{{id}}" id="contact{{id}}">
+  <div data-id="{{id}}" class="contact">
     <h3 class="full_name">{{full_name}}</h3>
-    <p><strong>Phone Number:</strong><span class="phone_number">{{phone_number}}</span></p>
-    <p><strong>Email:</strong><span class="email">{{email}}</span></p>
+    <div class="phone_number">
+    <p><strong>Phone Number:</strong><p>
+    <p><span class="phone_number">{{phone_number}}</span></p>
+    </div>
+    <div class="email">
+      <p><strong>Email:</strong><p>
+      <p><span class="email">{{email}}</span></p>
+    </div>
     <button class="edit">Edit</button>
     <button class="delete">Delete</button>
   </div>
