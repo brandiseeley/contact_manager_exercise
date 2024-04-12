@@ -5,10 +5,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <link rel="stylesheet" href="/stylesheets/main.css">
   <script src="/javascripts/jquery.js"></script>
   <script src="/javascripts/handlebars.js"></script>
+  <script src="/javascripts/contact_manager.js" type="module"></script>
+  <script src="/javascripts/main.js" type="module"></script>
 </head>
 <body>
+  <header>
+    <h1>Contact Manager</h1>
+    <p>A JS239 Practice Project</p>
+  </header>
+  <main>
+    <div id="controls">
+      <button id="add">Add Contact</button>
+      <input type="text" placeholder="Search">
+    </div>
 
+    <div>
+      <form id="contactForm">
+        <h2>Create Contact</h2>
+        <label>
+          Full name:
+          <input name="full_name" type="text">
+        </label>
+
+        <label>
+          Email address:
+          <input name="email" type="email">
+        </label>
+
+        <label>
+          Telephone number:
+          <input name="phone_number" type="tel">
+        </label>
+
+        <button type="submit">Submit</button>
+        <button type="reset">Cancel</button>
+      </form>
+    </div>
+
+    <div id="contacts">
+    </div>
+  </main>
+  <footer>
+    <p>Developed by Brandi</p>
+  </footer>
 </body>
 </html>
+
+<!-- Templates -->
+<script id="contactTemplate" type="text/x-handlebars">
+  <div id="contact{{id}}">
+    <h3>{{full_name}}</h3>
+    <p><strong>Phone Number:</strong>{{phone_number}}</p>
+    <p><strong>Email:</strong>{{email}}</p>
+    <button class="edit">Edit</button>
+    <button class="delete">Delete</button>
+  </div>
+</script>
