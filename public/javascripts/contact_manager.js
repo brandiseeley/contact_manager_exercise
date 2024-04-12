@@ -69,7 +69,16 @@ let ContactManager = (function() {
       } catch (error) {
         alert(error);
       }
-    }
+    },
+
+    async allContactsWithTag(tag) {
+      let contacts = await this.allContacts();
+      let filteredContacts = contacts.filter(contact => {
+        let tags = contact.tags.split(',').map(str => str.trim());
+        return tags.includes(tag);
+      });
+      return filteredContacts;
+    },
   };
 })();
 

@@ -22,8 +22,10 @@ const DOM = (function() {
   //       renderContact takes existing data.
   //       Fetch data in main and send it to renderContacts.
   //       DOM shouldn't be async
-  async function renderContacts() {
-    let contacts = await ContactManager.allContacts();
+  async function renderContacts(contacts) {
+    if (contacts === undefined) {
+      contacts = await ContactManager.allContacts();
+    }
     contacts.forEach(contact => {
       if (contact.tags) {
         contact.tags = contact.tags.split(',');
@@ -102,7 +104,9 @@ const Handlers = (function() {
   }
 
   function editOrDelete(event) {
-    if (event.target.tagName !== 'BUTTON') return;
+    if (event.target.tagName !== 'BUTTON' ||
+        !event.target.classList.contains('edit') ||
+        !event.target.classList.contains('delete')) return;
     let contactDiv = event.target.closest('div');
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
@@ -125,11 +129,20 @@ const Handlers = (function() {
     document.querySelector('h2.contactForm').textContent = '';
   }
 
+  async function filterByTag(event) {
+    if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
+      let tag = event.target.textContent.trim();
+      let contactsWithTag = await ContactManager.allContactsWithTag(tag);
+      DOM.renderContacts(contactsWithTag);
+    }
+  }
+
   return {
     addOrEditContact,
     editOrDelete,
     showAddContactForm,
     hideContactForm,
+    filterByTag,
   };
 })();
 
@@ -145,4 +158,5 @@ document.addEventListener('DOMContentLoaded', () => {
   contacts.addEventListener('click', Handlers.editOrDelete);
   addContactButton.addEventListener('click', Handlers.showAddContactForm);
   cancelButton.addEventListener('click', Handlers.hideContactForm);
+  contacts.addEventListener('click', Handlers.filterByTag);
 });
