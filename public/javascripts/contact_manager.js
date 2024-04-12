@@ -9,9 +9,15 @@ let ContactManager = (function() {
       },
       body: JSON.stringify(data),
     };
-    let response = await fetch(DOMAIN + '/api/contacts/', requestObject);
-    let json = await response.json();
-    return json;
+
+    try {
+      let response = await fetch(DOMAIN + '/api/contacts/', requestObject);
+      let json = await response.json();
+      console.log('Add Contact Response: ', json);
+      return json;
+    } catch (error) {
+      alert(error);
+    }
   }
 
   async function editContact(data) {
@@ -23,17 +29,25 @@ let ContactManager = (function() {
       body: JSON.stringify(data),
     };
 
-    let response = await fetch(DOMAIN + '/api/contacts/' + data.id, requestObject);
-    // TODO: Error handling and response
+    try {
+      let response = await fetch(DOMAIN + '/api/contacts/' + data.id, requestObject);
+      let json = await response.json();
+      console.log('Edit Contact Response: ', json);
+    } catch (error) {
+      alert(error);
+    }
   }
 
   // Public
-  // Returns promises?
   return {
     async allContacts() {
-      let response = await fetch('http://localhost:3000/api/contacts');
-      let json = await response.json();
-      return json;
+      try {
+        let response = await fetch('http://localhost:3000/api/contacts');
+        let json = await response.json();
+        return json;
+      } catch (error) {
+        alert(error);
+      }
     },
 
     addOrEditContact(contactData) {
@@ -50,7 +64,11 @@ let ContactManager = (function() {
         method: 'DELETE',
       };
 
-      fetch(DOMAIN + '/api/contacts/' + id, requestObject);
+      try {
+        fetch(DOMAIN + '/api/contacts/' + id, requestObject);
+      } catch (error) {
+        alert(error);
+      }
     }
   };
 })();

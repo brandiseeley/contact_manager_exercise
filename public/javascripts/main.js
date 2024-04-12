@@ -105,7 +105,9 @@ const Handlers = (function() {
     }
   }
 
-  function showAddContactForm(event) {
+  function showAddContactForm() {
+    document.querySelector('#contactForm').reset();
+    document.querySelector('#editId').setAttribute('value', '');
     document.querySelector('h2.contactForm').textContent = 'Create Contact';
     document.querySelector('#contactFormWrapper').style.display = 'block';
   }
