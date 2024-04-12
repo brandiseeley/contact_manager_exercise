@@ -111,7 +111,7 @@ div.email, div.phone_number {
   margin: 3px 0;
 }
 
-#contactFormWrapper {
+#contactFormWrapper.hidden {
   display: none;
 }
 

@@ -59,7 +59,7 @@ const Handlers = (function() {
 
   function showEditContactForm() {
     document.querySelector('h2.contactForm').textContent = 'Edit Contact';
-    document.querySelector('#contactFormWrapper').style.display = 'block';
+    document.querySelector('#contactFormWrapper').classList.remove('hidden');
 
   }
 
@@ -109,11 +109,11 @@ const Handlers = (function() {
     document.querySelector('#contactForm').reset();
     document.querySelector('#editId').setAttribute('value', '');
     document.querySelector('h2.contactForm').textContent = 'Create Contact';
-    document.querySelector('#contactFormWrapper').style.display = 'block';
+    document.querySelector('#contactFormWrapper').classList.remove('hidden');
   }
 
   function hideContactForm() {
-    document.querySelector('#contactFormWrapper').style.display = 'none';
+    document.querySelector('#contactFormWrapper').classList.add('hidden');
     document.querySelector('h2.contactForm').textContent = '';
   }
 
