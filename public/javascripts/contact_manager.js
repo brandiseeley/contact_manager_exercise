@@ -22,6 +22,14 @@ let ContactManager = (function() {
       let response = await fetch(DOMAIN + '/api/contacts/', requestObject);
       let json = await response.json();
       return json;
+    },
+
+    deleteContact(id) {
+      let requestObject = {
+        method: 'DELETE',
+      };
+
+      fetch(DOMAIN + '/api/contacts/' + id, requestObject);
     }
   };
 })();

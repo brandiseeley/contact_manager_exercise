@@ -1,0 +1,12 @@
+input {
+  padding: 5px;
+  margin: 5px;
+}
+
+div {
+  border: 2px solid grey;
+}
+
+label {
+  display: block;
+}

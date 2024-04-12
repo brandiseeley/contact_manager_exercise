@@ -61,6 +61,12 @@ const DOM = (function() {
 })();
 
 const Handlers = (function() {
+
+  function contactId(contactDiv) {
+    return contactDiv.dataset.id;
+  }
+
+  // TODO: Clear form after adding contact
   async function newContact(event) {
     event.preventDefault();
     let form = document.querySelector('#contactForm');
@@ -70,16 +76,30 @@ const Handlers = (function() {
     DOM.renderContact(addedContactData);
   }
 
+  function editOrDelete(event) {
+    if (event.target.tagName !== 'BUTTON') return;
+    let contactDiv = event.target.closest('div');
+    let id = contactId(contactDiv);
+    if (event.target.className === 'delete') {
+      console.log('deleting');
+      ContactManager.deleteContact(id);
+      contactDiv.remove();
+    }
+  }
+
   return {
     newContact,
+    editOrDelete,
   };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
   let newContactForm = document.querySelector('#contactForm');
+  let contacts = document.querySelector('#contacts');
 
   DOM.renderContacts();
 
   newContactForm.addEventListener('submit', Handlers.newContact);
+  contacts.addEventListener('click', Handlers.editOrDelete);
 
 });
