@@ -66,11 +66,6 @@ const Handlers = (function() {
     return contactDiv.dataset.id;
   }
 
-  function hideContactForm() {
-    document.querySelector('#contactFormWrapper').style.display = 'none';
-    document.querySelector('#h2.contactForm').textContent = '';
-  }
-
   // Public
   async function newContact(event) {
     event.preventDefault();
@@ -99,10 +94,16 @@ const Handlers = (function() {
     document.querySelector('#contactFormWrapper').style.display = 'block';
   }
 
+  function hideContactForm() {
+    document.querySelector('#contactFormWrapper').style.display = 'none';
+    document.querySelector('#h2.contactForm').textContent = '';
+  }
+
   return {
     newContact,
     editOrDelete,
     showAddContactForm,
+    hideContactForm,
   };
 })();
 
@@ -110,11 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let newContactForm = document.querySelector('#contactForm');
   let contacts = document.querySelector('#contacts');
   let addContactButton = document.querySelector('#add');
+  let cancelButton = document.querySelector('#cancel');
 
   DOM.renderContacts();
 
   newContactForm.addEventListener('submit', Handlers.newContact);
   contacts.addEventListener('click', Handlers.editOrDelete);
   addContactButton.addEventListener('click', Handlers.showAddContactForm);
-
+  cancelButton.addEventListener('click', Handlers.hideContactForm);
 });
