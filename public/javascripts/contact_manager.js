@@ -44,7 +44,6 @@ let ContactManager = (function() {
       try {
         let response = await fetch('http://localhost:3000/api/contacts');
         let json = await response.json();
-        console.log(json);
         json.forEach(contact => {
           contact.tags = contact.tags.split(',').map(str => str.trim());
         });
@@ -78,8 +77,7 @@ let ContactManager = (function() {
     async allContactsWithTag(tag) {
       let contacts = await this.allContacts();
       let filteredContacts = contacts.filter(contact => {
-        let tags = contact.tags.split(',').map(str => str.trim());
-        return tags.includes(tag);
+        return contact.tags.includes(tag);
       });
       return filteredContacts;
     },
