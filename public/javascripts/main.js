@@ -2,17 +2,29 @@ import { ContactManager } from './contact_manager.js';
 
 const Templater = (function() {
   let contactTemplate;
+  let contactSectionTemplate;
 
   function contact(object) {
     if (contactTemplate) return contactTemplate(object);
 
     let html = document.querySelector('#contactTemplate').innerHTML;
     contactTemplate = Handlebars.compile(html);
+    Handlebars.registerPartial('contactTemplate', html);
     return contactTemplate(object);
+  }
+
+  function contactSection(object) {
+    if (contactSectionTemplate) return contactSectionTemplate(object);
+
+    contact(); // To register partial
+    let html = document.querySelector('#contactSectionTemplate').innerHTML;
+    contactSectionTemplate = Handlebars.compile(html);
+    return contactSectionTemplate(object);
   }
 
   return {
     contact,
+    contactSection,
   };
 })();
 
@@ -26,19 +38,13 @@ const DOM = (function() {
     if (contacts === undefined) {
       contacts = await ContactManager.allContacts();
     }
-    contacts.forEach(contact => {
-      if (contact.tags) {
-        contact.tags = contact.tags.split(',');
-      }
-    });
 
-    // TODO: Use handlebars partial instead of looping through contacts.
+    console.log(contacts);
+
     let contactDiv = document.querySelector('#contacts');
     contactDiv.innerHTML = '';
-    contacts.forEach(contact => {
-      let html = Templater.contact(contact);
-      contactDiv.insertAdjacentHTML('beforeend', html);
-    });
+    let html = Templater.contactSection({ contacts });
+    contactDiv.innerHTML = html;
   }
 
   function parseForm(form) {

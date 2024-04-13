@@ -63,6 +63,16 @@
 </html>
 
 <!-- Templates -->
+<script id="contactSectionTemplate" type="text/x-handlebars">
+  {{#if contacts}}
+  {{#each contacts}}
+  {{> contactTemplate}}
+  {{/each}}
+  {{else}}
+  <h1>No Contacts</h1>
+  {{/if}}
+</script>
+
 <script id="contactTemplate" type="text/x-handlebars">
   <div data-id="{{id}}" class="contact">
     <h3 class="full_name">{{full_name}}</h3>
@@ -77,6 +87,7 @@
     <div class="tags">
       {{#if tags}}
       <p><strong>Tags:</strong></p>
+      <p>{{tags}}</p>
       <p class="tags">{{#each tags}}
       <button class="tag">{{this}}</button>
       {{/each}}</p>
