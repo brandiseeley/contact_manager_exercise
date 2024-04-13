@@ -25,16 +25,19 @@
 
     <div id="contactFormWrapper" class="hidden">
       <div id="padding">
-      <form id="contactForm">
+      <form id="contactForm" novalidate>
         <h2 class="contactForm"></h2>
         <label for="full_name">Full name:</label>
-        <input class="full_name" name="full_name" type="text">
+        <input class="full_name" name="full_name" type="text" required>
+        <span class="invalid"></span>
 
         <label for="email">Email address:</label>
-        <input class="email" name="email" type="email">
+        <input class="email" name="email" type="email" required>
+        <span class="invalid"></span>
 
         <label for="phone_number">Telephone number:</label>
-        <input class="phone_number" name="phone_number" type="tel">
+        <input class="phone_number" name="phone_number" type="tel" required>
+        <span class="invalid"></span>
         
         <label for="tags">Tags:</label>
         <input class="tags" name="tags" type="text">

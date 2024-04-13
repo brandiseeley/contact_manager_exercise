@@ -4,6 +4,58 @@
 import { ContactManager } from './contact_manager.js';
 import { Templater } from './template_manager.js';
 
+const Validator = (function() {
+  let nameField;
+  let emailField;
+  let phoneField;
+  let fields;
+
+  function validInputs() {
+    console.log(fields);
+    for (let field of fields) {
+      console.log(field);
+      if (!field.validity.valid) return false;
+    }
+    return true;
+  }
+
+  function showErrors() {
+    for (let field of fields) {
+      if (!field.validity.valid) {
+        let error = field.nextElementSibling;
+        error.textContent = field.validationMessage;
+      }
+    }
+  }
+
+  function suppressError(input) {
+    let error = input.nextElementSibling;
+    error.textContent = '';
+  }
+
+  function clearAllErrors() {
+    for (let field of fields) {
+      let error = field.nextElementSibling;
+      error.textContent = '';
+    }
+  }
+
+  function init() {
+    nameField = document.querySelector('#contactForm input[name="full_name"]');
+    emailField = document.querySelector('#contactForm input[name="email"]');
+    phoneField = document.querySelector('#contactForm input[name="phone_number"]');
+    fields = [nameField, emailField, phoneField];
+  }
+
+  return {
+    validInputs,
+    showErrors,
+    suppressError,
+    clearAllErrors,
+    init,
+  };
+})();
+
 const FormManager = (function() {
   let form;
   let formWrapper;
@@ -52,6 +104,7 @@ const FormManager = (function() {
     setEditId('');
     hide();
     setTimeout(() => {
+      Validator.clearAllErrors();
       formHeader.textContent = '';
       formWrapper.querySelector('form').reset();
     }, 750);
@@ -111,6 +164,12 @@ const Manager = (function() {
   async function addOrEdit(event) {
     event.preventDefault();
     let form = document.querySelector('#contactForm');
+
+    if (!Validator.validInputs()) {
+      Validator.showErrors();
+      return;
+    }
+
     let contactData = FormManager.parseForm(form);
 
     // TODO: Do we need to capture the response anymore?
@@ -153,6 +212,13 @@ const Manager = (function() {
     renderContacts(contacts, query);
   }
 
+  function focusOnInput(event) {
+    console.log('Focusing on', event.target);
+    if ((event.target.tagName === 'INPUT') && !event.target.validity.valid) {
+      Validator.suppressError(event.target);
+    }
+  }
+
   return {
     renderContacts,
     addOrEdit,
@@ -160,11 +226,13 @@ const Manager = (function() {
     cancelAddOrEdit,
     filterByTag,
     filterByName,
+    focusOnInput,
   };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
   FormManager.init();
+  Validator.init();
 
   let newContactForm = document.querySelector('#contactForm');
   let contacts = document.querySelector('#contacts');
@@ -175,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
   Manager.renderContacts();
 
   newContactForm.addEventListener('submit', Manager.addOrEdit);
+  newContactForm.addEventListener('focusin', Manager.focusOnInput);
   contacts.addEventListener('click', Manager.editOrDelete);
   addContactButton.addEventListener('click', FormManager.showAddContactForm);
   cancelButton.addEventListener('click', Manager.cancelAddOrEdit);

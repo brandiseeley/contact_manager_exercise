@@ -123,6 +123,10 @@ header, footer {
   padding: 10px;
 }
 
+.invalid {
+  color: #820020;
+}
+
 .tag {
   border: 1px solid lightcoral;
   background-color: lightgray;
