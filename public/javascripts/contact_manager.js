@@ -1,5 +1,5 @@
 let ContactManager = (function() {
-  const DOMAIN = 'http://localhost:3000'
+  const DOMAIN = 'http://localhost:3000';
   // Private
   async function addContact(data) {
     let requestObject = {

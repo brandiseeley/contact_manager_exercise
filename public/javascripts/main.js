@@ -30,11 +30,11 @@ const Templater = (function() {
 })();
 
 // Orchestrates between Contact Manager and Templater
-const DOM = (function() {
+const Manager = (function() {
   // TODO: Badly named. renderContacts fetches and renders
   //       renderContact takes existing data.
   //       Fetch data in main and send it to renderContacts.
-  //       DOM shouldn't be async
+  //       Manager shouldn't be async
   async function renderContacts(contacts, query) {
     if (contacts === undefined) {
       contacts = await ContactManager.allContacts();
@@ -72,55 +72,94 @@ const DOM = (function() {
   };
 })();
 
-const Handlers = (function() {
-  // Private
-  function contactId(contactDiv) {
-    return contactDiv.dataset.id;
+const FormManager = (function() {
+  let form;
+  let formWrapper;
+  let formHeader;
+
+  function hideContactForm() {
+    document.querySelector('#editId').setAttribute('value', '');
+    formWrapper.classList.add('hidden');
+    setTimeout(() => {
+      formHeader.textContent = '';
+      formWrapper.querySelector('form').reset();
+    }, 750);
   }
 
   function showEditContactForm(contactDiv) {
     scrollTo({top: 0, left: 0, behavior: "smooth"});
-    let formWrapper = document.querySelector('#contactFormWrapper');
     if (!formWrapper.classList.contains('hidden')) {
       hideContactForm();
       setTimeout(() => {
-        document.querySelector('h2.contactForm').textContent = 'Edit Contact';
-        displayEditContact(contactDiv);
-        document.querySelector('#contactFormWrapper').classList.remove('hidden');
-      }, 1000);
+        formHeader.textContent = 'Edit Contact';
+        populateInputs(contactDiv);
+        formWrapper.classList.remove('hidden');
+      }, 750);
     } else {
-      displayEditContact(contactDiv);
-      document.querySelector('h2.contactForm').textContent = 'Edit Contact';
-      document.querySelector('#contactFormWrapper').classList.remove('hidden');
+      populateInputs(contactDiv);
+      formHeader.textContent = 'Edit Contact';
+      formWrapper.classList.remove('hidden');
     }
   }
 
-  function displayEditContact(contactDiv) {
-    let editForm = document.querySelector('#contactForm');
+  function populateInputs(contactDiv) {
     let name = contactDiv.querySelector('.full_name').textContent;
     let phone = contactDiv.querySelector('span.phone_number').textContent;
     let email = contactDiv.querySelector('span.email').textContent;
     let tagElements = Array.from(contactDiv.querySelectorAll('div.tags .tag'));
     let tags = tagElements.map(tag => tag.textContent).join(', ');
     let id = contactDiv.dataset.id;
-    editForm.querySelector('.full_name').value = name;
-    editForm.querySelector('.phone_number').value = phone;
-    editForm.querySelector('.email').value = email;
-    editForm.querySelector('.tags').value = tags;
-    editForm.querySelector('#editId').setAttribute('value', id);
+    form.querySelector('.full_name').value = name;
+    form.querySelector('.phone_number').value = phone;
+    form.querySelector('.email').value = email;
+    form.querySelector('.tags').value = tags;
+    form.querySelector('#editId').setAttribute('value', id);
+  }
+
+  function showAddContactForm() {
+    if (!formWrapper.classList.contains('hidden')) {
+      FormManager.hideContactForm();
+      setTimeout(() => {
+        formHeader.textContent = 'Create Contact';
+        formWrapper.classList.remove('hidden');
+      }, 750);
+    } else {
+      formHeader.textContent = 'Create Contact';
+      formWrapper.classList.remove('hidden');
+    }
+  }
+
+  function init() {
+    form = document.querySelector('#contactForm');
+    formWrapper = document.querySelector('#contactFormWrapper');
+    formHeader = document.querySelector('h2.contactForm');
+  }
+
+  return {
+    showEditContactForm,
+    showAddContactForm,
+    hideContactForm,
+    init,
+  };
+})();
+
+const Handlers = (function() {
+  // Private
+  function contactId(contactDiv) {
+    return contactDiv.dataset.id;
   }
 
   // Public
   async function addOrEditContact(event) {
     event.preventDefault();
     let form = document.querySelector('#contactForm');
-    let contactData = DOM.parseForm(form);
+    let contactData = Manager.parseForm(form);
 
     // TODO: Do we need to capture the response anymore?
     let newContactData = await ContactManager.addOrEditContact(contactData);
 
-    DOM.renderContacts();
-    hideContactForm();
+    Manager.renderContacts();
+    FormManager.hideContactForm();
   }
 
   function editOrDelete(event) {
@@ -131,75 +170,55 @@ const Handlers = (function() {
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
       ContactManager.deleteContact(id);
-      DOM.renderContacts();
-      // contactDiv.remove();
+      Manager.renderContacts();
     } else {
-      showEditContactForm(contactDiv);
+      FormManager.showEditContactForm(contactDiv);
     }
   }
 
-  function showAddContactForm() {
-    let formWrapper = document.querySelector('#contactFormWrapper');
-    if (!formWrapper.classList.contains('hidden')) {
-      hideContactForm();
-      setTimeout(() => {
-        document.querySelector('h2.contactForm').textContent = 'Create Contact';
-        document.querySelector('#contactFormWrapper').classList.remove('hidden');
-      }, 1000);
-    } else {
-      document.querySelector('h2.contactForm').textContent = 'Create Contact';
-      document.querySelector('#contactFormWrapper').classList.remove('hidden');
-    }
-  }
-
-  function hideContactForm(event) {
+  function cancelAddOrEdit(event) {
     if (event) event.preventDefault();
-    document.querySelector('#editId').setAttribute('value', '');
-    let formWrapper = document.querySelector('#contactFormWrapper');
-    formWrapper.classList.add('hidden');
-    setTimeout(() => {
-      document.querySelector('h2.contactForm').textContent = '';
-      formWrapper.querySelector('form').reset();
-    }, 1000);
+    FormManager.hideContactForm();
   }
 
   async function filterByTag(event) {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
       let tag = event.target.textContent.trim();
       let contactsWithTag = await ContactManager.allContactsWithTag(tag);
-      DOM.renderContacts(contactsWithTag);
+      Manager.renderContacts(contactsWithTag);
     }
   }
 
   async function filterByName(event) {
     let query = event.target.value;
     let contacts = await ContactManager.allContactsMatchingSearch(query);
-    DOM.renderContacts(contacts, query);
+    Manager.renderContacts(contacts, query);
   }
 
   return {
     addOrEditContact,
     editOrDelete,
-    showAddContactForm,
-    hideContactForm,
+    cancelAddOrEdit,
     filterByTag,
     filterByName,
   };
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+  FormManager.init();
+
   let newContactForm = document.querySelector('#contactForm');
   let contacts = document.querySelector('#contacts');
   let addContactButton = document.querySelector('#add');
   let cancelButton = document.querySelector('#cancel');
   let searchForm = document.querySelector('#search');
 
-  DOM.renderContacts();
+  Manager.renderContacts();
 
   newContactForm.addEventListener('submit', Handlers.addOrEditContact);
   contacts.addEventListener('click', Handlers.editOrDelete);
-  addContactButton.addEventListener('click', Handlers.showAddContactForm);
-  cancelButton.addEventListener('click', Handlers.hideContactForm);
+  addContactButton.addEventListener('click', FormManager.showAddContactForm);
+  cancelButton.addEventListener('click', Handlers.cancelAddOrEdit);
   contacts.addEventListener('click', Handlers.filterByTag);
   searchForm.addEventListener('keyup', Handlers.filterByName);
 });
