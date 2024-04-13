@@ -70,6 +70,11 @@ h1 {
   padding: 20px;
 }
 
+h2 {
+  font-size: 30px;
+
+}
+
 h3 {
   font-size: 25px;
   padding: 20px 0;
@@ -124,8 +129,21 @@ div.email, div.phone_number {
   margin: 3px 0;
 }
 
+#contactFormWrapper {
+  z-index: 5;
+  padding: 0;
+  max-height: 300px;
+  overflow: hidden;
+  transition: max-height 1s ease-in;
+}
+
 #contactFormWrapper.hidden {
-  display: none;
+  max-height: 0;
+  transition: max-height 1s ease-in;
+}
+
+#padding {
+  padding: 10px;
 }
 
 #controls, footer {
@@ -134,5 +152,6 @@ div.email, div.phone_number {
 }
 
 #contacts {
+  z-index: 10;
   padding: 0;
 }

@@ -126,7 +126,7 @@ const Handlers = (function() {
 
   function hideContactForm() {
     document.querySelector('#contactFormWrapper').classList.add('hidden');
-    document.querySelector('h2.contactForm').textContent = '';
+    setTimeout(() => document.querySelector('h2.contactForm').textContent = '', 1000);
   }
 
   async function filterByTag(event) {
