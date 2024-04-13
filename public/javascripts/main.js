@@ -2,49 +2,6 @@
 import { ContactManager } from './contact_manager.js';
 import { Templater } from './template_manager.js';
 
-// Orchestrates between Contact Manager and Templater
-const Manager = (function() {
-  // TODO: Badly named. renderContacts fetches and renders
-  //       renderContact takes existing data.
-  //       Fetch data in main and send it to renderContacts.
-  //       Manager shouldn't be async
-  async function renderContacts(contacts, query) {
-    if (contacts === undefined) {
-      contacts = await ContactManager.allContacts();
-    }
-
-    contacts = { contacts };
-    if (query) {
-      contacts.query = query;
-    }
-
-    let contactDiv = document.querySelector('#contacts');
-    contactDiv.innerHTML = '';
-    let html = Templater.contactSection(contacts);
-    contactDiv.innerHTML = html;
-  }
-
-  function parseForm(form) {
-    let object = {};
-
-    for (let element of form.elements) {
-      if (element.type !== 'submit' && element.type !== 'reset') {
-        object[element.name] = element.value;
-      }
-    }
-    object.tags = object.tags.split(',')
-                             .map(str => str.trim())
-                             .filter(str => str)
-                             .join(',');
-    return object;
-  }
-
-  return {
-    renderContacts,
-    parseForm,
-  };
-})();
-
 const FormManager = (function() {
   let form;
   let formWrapper;
@@ -102,6 +59,21 @@ const FormManager = (function() {
     }
   }
 
+  function parseForm() {
+    let contactData = {};
+
+    for (let element of form.elements) {
+      if (element.type !== 'submit' && element.type !== 'reset') {
+        contactData[element.name] = element.value;
+      }
+    }
+    contactData.tags = contactData.tags.split(',')
+                                       .map(str => str.trim())
+                                       .filter(str => str)
+                                       .join(',');
+    return contactData;
+  }
+
   function init() {
     form = document.querySelector('#contactForm');
     formWrapper = document.querySelector('#contactFormWrapper');
@@ -112,26 +84,41 @@ const FormManager = (function() {
     showEditContactForm,
     showAddContactForm,
     hideContactForm,
+    parseForm,
     init,
   };
 })();
 
-const Handlers = (function() {
-  // Private
+const Manager = (function() {
   function contactId(contactDiv) {
     return contactDiv.dataset.id;
   }
 
-  // Public
-  async function addOrEditContact(event) {
+  async function renderContacts(contacts, query) {
+    if (contacts === undefined) {
+      contacts = await ContactManager.allContacts();
+    }
+
+    contacts = { contacts };
+    if (query) {
+      contacts.query = query;
+    }
+
+    let contactDiv = document.querySelector('#contacts');
+    contactDiv.innerHTML = '';
+    let html = Templater.contactSection(contacts);
+    contactDiv.innerHTML = html;
+  }
+
+  async function addOrEdit(event) {
     event.preventDefault();
     let form = document.querySelector('#contactForm');
-    let contactData = Manager.parseForm(form);
+    let contactData = FormManager.parseForm(form);
 
     // TODO: Do we need to capture the response anymore?
     let newContactData = await ContactManager.addOrEditContact(contactData);
 
-    Manager.renderContacts();
+    renderContacts();
     FormManager.hideContactForm();
   }
 
@@ -143,7 +130,7 @@ const Handlers = (function() {
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
       ContactManager.deleteContact(id);
-      Manager.renderContacts();
+      renderContacts();
     } else {
       FormManager.showEditContactForm(contactDiv);
     }
@@ -158,18 +145,19 @@ const Handlers = (function() {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
       let tag = event.target.textContent.trim();
       let contactsWithTag = await ContactManager.allContactsWithTag(tag);
-      Manager.renderContacts(contactsWithTag);
+      renderContacts(contactsWithTag);
     }
   }
 
   async function filterByName(event) {
     let query = event.target.value;
     let contacts = await ContactManager.allContactsMatchingSearch(query);
-    Manager.renderContacts(contacts, query);
+    renderContacts(contacts, query);
   }
 
   return {
-    addOrEditContact,
+    renderContacts,
+    addOrEdit,
     editOrDelete,
     cancelAddOrEdit,
     filterByTag,
@@ -188,10 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   Manager.renderContacts();
 
-  newContactForm.addEventListener('submit', Handlers.addOrEditContact);
-  contacts.addEventListener('click', Handlers.editOrDelete);
+  newContactForm.addEventListener('submit', Manager.addOrEdit);
+  contacts.addEventListener('click', Manager.editOrDelete);
   addContactButton.addEventListener('click', FormManager.showAddContactForm);
-  cancelButton.addEventListener('click', Handlers.cancelAddOrEdit);
-  contacts.addEventListener('click', Handlers.filterByTag);
-  searchForm.addEventListener('keyup', Handlers.filterByName);
+  cancelButton.addEventListener('click', Manager.cancelAddOrEdit);
+  contacts.addEventListener('click', Manager.filterByTag);
+  searchForm.addEventListener('keyup', Manager.filterByName);
 });
