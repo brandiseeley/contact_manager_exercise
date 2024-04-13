@@ -73,9 +73,20 @@ const Handlers = (function() {
     return contactDiv.dataset.id;
   }
 
-  function showEditContactForm() {
-    document.querySelector('h2.contactForm').textContent = 'Edit Contact';
-    document.querySelector('#contactFormWrapper').classList.remove('hidden');
+  function showEditContactForm(contactDiv) {
+    let formWrapper = document.querySelector('#contactFormWrapper');
+    if (!formWrapper.classList.contains('hidden')) {
+      hideContactForm();
+      setTimeout(() => {
+        document.querySelector('h2.contactForm').textContent = 'Edit Contact';
+        displayEditContact(contactDiv);
+        document.querySelector('#contactFormWrapper').classList.remove('hidden');
+      }, 1000);
+    } else {
+      displayEditContact(contactDiv);
+      document.querySelector('h2.contactForm').textContent = 'Edit Contact';
+      document.querySelector('#contactFormWrapper').classList.remove('hidden');
+    }
   }
 
   function displayEditContact(contactDiv) {
@@ -91,7 +102,6 @@ const Handlers = (function() {
     editForm.querySelector('.email').value = email;
     editForm.querySelector('.tags').value = tags;
     editForm.querySelector('#editId').setAttribute('value', id);
-    showEditContactForm();
   }
 
   // Public
@@ -117,18 +127,27 @@ const Handlers = (function() {
       ContactManager.deleteContact(id);
       contactDiv.remove();
     } else {
-      displayEditContact(contactDiv);
+      showEditContactForm(contactDiv);
     }
   }
 
   function showAddContactForm() {
-    document.querySelector('#contactForm').reset();
-    document.querySelector('#editId').setAttribute('value', '');
-    document.querySelector('h2.contactForm').textContent = 'Create Contact';
-    document.querySelector('#contactFormWrapper').classList.remove('hidden');
+    let formWrapper = document.querySelector('#contactFormWrapper');
+    if (!formWrapper.classList.contains('hidden')) {
+      hideContactForm();
+      setTimeout(() => {
+        document.querySelector('h2.contactForm').textContent = 'Create Contact';
+        document.querySelector('#contactFormWrapper').classList.remove('hidden');
+      }, 1000);
+    } else {
+      document.querySelector('h2.contactForm').textContent = 'Create Contact';
+      document.querySelector('#contactFormWrapper').classList.remove('hidden');
+    }
   }
 
-  function hideContactForm() {
+  function hideContactForm(event) {
+    if (event) event.preventDefault();
+    document.querySelector('#editId').setAttribute('value', '');
     let formWrapper = document.querySelector('#contactFormWrapper');
     formWrapper.classList.add('hidden');
     setTimeout(() => {
