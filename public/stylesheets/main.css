@@ -112,6 +112,14 @@ strong {
   font-size: 18px;
 }
 
+footer {
+  text-align: center;
+}
+
+header, footer {
+  padding: 10px;
+}
+
 .tag {
   border: 1px solid lightcoral;
   background-color: lightgray;
@@ -134,12 +142,12 @@ div.email, div.phone_number {
   padding: 0;
   max-height: 300px;
   overflow: hidden;
-  transition: max-height 1s ease-in;
+  transition: max-height 0.75s ease-in;
 }
 
 #contactFormWrapper.hidden {
   max-height: 0;
-  transition: max-height 1s ease-in;
+  transition: max-height 0.75s ease-in;
 }
 
 #padding {
@@ -148,7 +156,7 @@ div.email, div.phone_number {
 
 #controls, footer {
   background-color: lightgrey;
-  height: 50px;
+  height: 40px;
 }
 
 #contacts {
