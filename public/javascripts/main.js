@@ -74,6 +74,7 @@ const Handlers = (function() {
   }
 
   function showEditContactForm(contactDiv) {
+    scrollTo({top: 0, left: 0, behavior: "smooth"});
     let formWrapper = document.querySelector('#contactFormWrapper');
     if (!formWrapper.classList.contains('hidden')) {
       hideContactForm();
@@ -125,7 +126,8 @@ const Handlers = (function() {
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
       ContactManager.deleteContact(id);
-      contactDiv.remove();
+      DOM.renderContacts();
+      // contactDiv.remove();
     } else {
       showEditContactForm(contactDiv);
     }
