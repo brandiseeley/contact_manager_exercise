@@ -67,10 +67,10 @@ const Handlers = (function() {
   function showEditContactForm() {
     document.querySelector('h2.contactForm').textContent = 'Edit Contact';
     document.querySelector('#contactFormWrapper').classList.remove('hidden');
-
   }
 
   function displayEditContact(contactDiv) {
+    console.log('displaying edit contact form');
     let editForm = document.querySelector('#contactForm');
     let name = contactDiv.querySelector('.full_name').textContent;
     let phone = contactDiv.querySelector('span.phone_number').textContent;
@@ -105,8 +105,8 @@ const Handlers = (function() {
 
   function editOrDelete(event) {
     if (event.target.tagName !== 'BUTTON' ||
-        !event.target.classList.contains('edit') ||
-        !event.target.classList.contains('delete')) return;
+        !(event.target.classList.contains('edit') ||
+        event.target.classList.contains('delete'))) return;
     let contactDiv = event.target.closest('div');
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
