@@ -87,10 +87,13 @@ p {
 input {
   padding: 5px;
   margin: 5px;
+  width: 200px;
 }
 
 label {
   display: block;
+  width: 400px;
+  padding-top: 4px;
 }
 
 button {
