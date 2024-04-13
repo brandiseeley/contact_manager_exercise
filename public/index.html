@@ -19,7 +19,7 @@
   <main>
     <div id="controls">
       <button id="add">Add Contact</button>
-      <input type="text" placeholder="Search">
+      <input id="search" type="text" placeholder="Search">
     </div>
 
     <div id="contactFormWrapper" class="hidden">
@@ -69,7 +69,11 @@
   {{> contactTemplate}}
   {{/each}}
   {{else}}
-  <h1>No Contacts</h1>
+    {{#if query}}
+      <h2>There are no contacts starting with <span id="query">{{query}}</span>.<h2>
+    {{else}}
+      <h2>No Contacts</h2>
+    {{/if}}
   {{/if}}
 </script>
 

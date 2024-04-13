@@ -84,6 +84,15 @@ let ContactManager = (function() {
       });
       return filteredContacts;
     },
+
+    async allContactsMatchingSearch(text) {
+      let contacts = await this.allContacts();
+      let filteredContacts = contacts.filter(contact => {
+        return contact.full_name.slice(0, text.length).toLowerCase()
+               === text.toLowerCase();
+      });
+      return filteredContacts;
+    }
   };
 })();
 

@@ -163,3 +163,7 @@ div.email, div.phone_number {
   z-index: 10;
   padding: 0;
 }
+
+#query {
+  font-weight: 600;
+}

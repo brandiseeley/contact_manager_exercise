@@ -35,14 +35,19 @@ const DOM = (function() {
   //       renderContact takes existing data.
   //       Fetch data in main and send it to renderContacts.
   //       DOM shouldn't be async
-  async function renderContacts(contacts) {
+  async function renderContacts(contacts, query) {
     if (contacts === undefined) {
       contacts = await ContactManager.allContacts();
     }
 
+    contacts = { contacts };
+    if (query) {
+      contacts.query = query;
+    }
+
     let contactDiv = document.querySelector('#contacts');
     contactDiv.innerHTML = '';
-    let html = Templater.contactSection({ contacts });
+    let html = Templater.contactSection(contacts);
     contactDiv.innerHTML = html;
   }
 
@@ -166,12 +171,19 @@ const Handlers = (function() {
     }
   }
 
+  async function filterByName(event) {
+    let query = event.target.value;
+    let contacts = await ContactManager.allContactsMatchingSearch(query);
+    DOM.renderContacts(contacts, query);
+  }
+
   return {
     addOrEditContact,
     editOrDelete,
     showAddContactForm,
     hideContactForm,
     filterByTag,
+    filterByName,
   };
 })();
 
@@ -180,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let contacts = document.querySelector('#contacts');
   let addContactButton = document.querySelector('#add');
   let cancelButton = document.querySelector('#cancel');
+  let searchForm = document.querySelector('#search');
 
   DOM.renderContacts();
 
@@ -188,4 +201,5 @@ document.addEventListener('DOMContentLoaded', () => {
   addContactButton.addEventListener('click', Handlers.showAddContactForm);
   cancelButton.addEventListener('click', Handlers.hideContactForm);
   contacts.addEventListener('click', Handlers.filterByTag);
+  searchForm.addEventListener('keyup', Handlers.filterByName);
 });
