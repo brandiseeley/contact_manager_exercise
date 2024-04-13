@@ -1,3 +1,5 @@
+/* eslint-disable max-statements */
+/* eslint-disable max-statements-per-line */
 /* eslint-disable indent */
 import { ContactManager } from './contact_manager.js';
 import { Templater } from './template_manager.js';
@@ -7,30 +9,11 @@ const FormManager = (function() {
   let formWrapper;
   let formHeader;
 
-  function hideContactForm() {
-    document.querySelector('#editId').setAttribute('value', '');
-    formWrapper.classList.add('hidden');
-    setTimeout(() => {
-      formHeader.textContent = '';
-      formWrapper.querySelector('form').reset();
-    }, 750);
-  }
-
-  function showEditContactForm(contactDiv) {
-    scrollTo({top: 0, left: 0, behavior: "smooth"});
-    if (!formWrapper.classList.contains('hidden')) {
-      hideContactForm();
-      setTimeout(() => {
-        formHeader.textContent = 'Edit Contact';
-        populateInputs(contactDiv);
-        formWrapper.classList.remove('hidden');
-      }, 750);
-    } else {
-      populateInputs(contactDiv);
-      formHeader.textContent = 'Edit Contact';
-      formWrapper.classList.remove('hidden');
-    }
-  }
+  let hide = () => formWrapper.classList.add('hidden');
+  let show = () => formWrapper.classList.remove('hidden');
+  let isHidden = () => formWrapper.classList.contains('hidden');
+  let setHeader = (title) => { formHeader.textContent = title };
+  let setEditId = (value) => document.querySelector('#editId').setAttribute('value', value);
 
   function populateInputs(contactDiv) {
     let name = contactDiv.querySelector('.full_name').textContent;
@@ -43,20 +26,35 @@ const FormManager = (function() {
     form.querySelector('.phone_number').value = phone;
     form.querySelector('.email').value = email;
     form.querySelector('.tags').value = tags;
-    form.querySelector('#editId').setAttribute('value', id);
+    setEditId(id);
   }
 
-  function showAddContactForm() {
-    if (!formWrapper.classList.contains('hidden')) {
-      FormManager.hideContactForm();
-      setTimeout(() => {
-        formHeader.textContent = 'Create Contact';
-        formWrapper.classList.remove('hidden');
-      }, 750);
-    } else {
-      formHeader.textContent = 'Create Contact';
-      formWrapper.classList.remove('hidden');
+  function showContactForm(title, contactDiv) {
+    scrollTo({top: 0, left: 0, behavior: "smooth"});
+    let delayToShow = 0;
+    if (!isHidden()) {
+      hideContactForm();
+      delayToShow = 750;
     }
+    setTimeout(() => {
+      setHeader(title);
+      if (contactDiv) populateInputs(contactDiv);
+      show();
+    }, delayToShow);
+  }
+
+  // Public Methods
+
+  let showEditContactForm = (contactDiv) => { showContactForm('Edit Contact', contactDiv) };
+  let showAddContactForm = () => { showContactForm('Add Contact') };
+
+  function hideContactForm() {
+    setEditId('');
+    hide();
+    setTimeout(() => {
+      formHeader.textContent = '';
+      formWrapper.querySelector('form').reset();
+    }, 750);
   }
 
   function parseForm() {
