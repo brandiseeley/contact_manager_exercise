@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { ContactManager } from './contact_manager.js';
 
 const Templater = (function() {
@@ -39,8 +40,6 @@ const DOM = (function() {
       contacts = await ContactManager.allContacts();
     }
 
-    console.log(contacts);
-
     let contactDiv = document.querySelector('#contacts');
     contactDiv.innerHTML = '';
     let html = Templater.contactSection({ contacts });
@@ -55,6 +54,10 @@ const DOM = (function() {
         object[element.name] = element.value;
       }
     }
+    object.tags = object.tags.split(',')
+                             .map(str => str.trim())
+                             .filter(str => str)
+                             .join(',');
     return object;
   }
 
@@ -76,7 +79,6 @@ const Handlers = (function() {
   }
 
   function displayEditContact(contactDiv) {
-    console.log('displaying edit contact form');
     let editForm = document.querySelector('#contactForm');
     let name = contactDiv.querySelector('.full_name').textContent;
     let phone = contactDiv.querySelector('span.phone_number').textContent;
@@ -101,11 +103,7 @@ const Handlers = (function() {
     // TODO: Do we need to capture the response anymore?
     let newContactData = await ContactManager.addOrEditContact(contactData);
 
-    // TODO: Rerender all contacts any time we update or delete
-    //       Too complicated to add and update dynamically
-
     DOM.renderContacts();
-    form.reset();
     hideContactForm();
   }
 
@@ -131,8 +129,12 @@ const Handlers = (function() {
   }
 
   function hideContactForm() {
-    document.querySelector('#contactFormWrapper').classList.add('hidden');
-    setTimeout(() => document.querySelector('h2.contactForm').textContent = '', 1000);
+    let formWrapper = document.querySelector('#contactFormWrapper');
+    formWrapper.classList.add('hidden');
+    setTimeout(() => {
+      document.querySelector('h2.contactForm').textContent = '';
+      formWrapper.querySelector('form').reset();
+    }, 1000);
   }
 
   async function filterByTag(event) {
