@@ -7,8 +7,13 @@ const Utility = (function() {
     return false;
   }
 
+  function scrollToTop() {
+    scrollTo({top: 0, left: 0, behavior: "smooth"});
+  }
+
   return {
     caseFreeIncludes,
+    scrollToTop,
   };
 })();
 

@@ -138,7 +138,7 @@ const FormManager = (function() {
   }
 
   function showContactForm(title, contactDiv) {
-    scrollTo({top: 0, left: 0, behavior: "smooth"});
+    Utility.scrollToTop();
     let delayToShow = 0;
     if (!isHidden()) {
       hideContactForm();
@@ -155,6 +155,7 @@ const FormManager = (function() {
   let showAddContactForm = () => { showContactForm('Add Contact') };
 
   function hideContactForm() {
+    Utility.scrollToTop();
     setEditId('');
     hide();
     setTimeout(() => {
@@ -256,6 +257,7 @@ const Manager = (function() {
   function addTag(event) {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
       TagManager.addTag(event.target.textContent.trim());
+      Utility.scrollToTop();
       renderContacts();
     }
   }
@@ -263,6 +265,7 @@ const Manager = (function() {
   function removeTag(event) {
     if (!event.target.closest('button')) return;
     event.target.closest('button').remove();
+    Utility.scrollToTop();
     renderContacts();
   }
 
