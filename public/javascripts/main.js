@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 /* eslint-disable max-statements */
 /* eslint-disable max-statements-per-line */
 /* eslint-disable indent */
@@ -225,16 +226,15 @@ const Manager = (function() {
     FormManager.hideContactForm();
   }
 
-  async function addTag(event) {
+  function addTag(event) {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
       TagManager.addTag(event.target.textContent.trim());
       renderContacts();
     }
   }
 
-  function controlsClick(event) {
-    let button = event.target.closest('button');
-    if (!button || !button.classList.contains('tag')) return;
+  function removeTag(event) {
+    if (!event.target.closest('button')) return;
     event.target.closest('button').remove();
     renderContacts();
   }
@@ -259,7 +259,7 @@ const Manager = (function() {
     addTag,
     filterByName,
     focusOnInput,
-    controlsClick,
+    removeTag,
   };
 })();
 
@@ -273,16 +273,16 @@ document.addEventListener('DOMContentLoaded', () => {
   let addContactButton = document.querySelector('#add');
   let cancelButton = document.querySelector('#cancel');
   let searchForm = document.querySelector('#search');
-  let controls = document.querySelector('#controls');
+  let filteringTags = document.querySelector('#filteringTags');
 
   Manager.renderContacts();
 
   newContactForm.addEventListener('submit', Manager.addOrEdit);
   newContactForm.addEventListener('focusin', Manager.focusOnInput);
-  contacts.addEventListener('click', Manager.editOrDelete);
   addContactButton.addEventListener('click', FormManager.showAddContactForm);
   cancelButton.addEventListener('click', Manager.cancelAddOrEdit);
-  contacts.addEventListener('click', Manager.addTag);
   searchForm.addEventListener('keyup', Manager.filterByName);
-  controls.addEventListener('click', Manager.controlsClick);
+  contacts.addEventListener('click', Manager.editOrDelete);
+  contacts.addEventListener('click', Manager.addTag);
+  filteringTags.addEventListener('click', Manager.removeTag);
 });
