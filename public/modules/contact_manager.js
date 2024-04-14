@@ -1,3 +1,5 @@
+import { Utility } from './utilities.js';
+
 let ContactManager = (function() {
   const DOMAIN = 'http://localhost:3000';
   // Private
@@ -90,7 +92,7 @@ let ContactManager = (function() {
         if (contacts.length === 0) return contacts;
         contacts = contacts.filter(contact => {
           if (!contact.tags) return false;
-          return contact.tags.includes(tag);
+          return Utility.caseFreeIncludes(contact.tags, tag);
         });
       }
       return contacts;
