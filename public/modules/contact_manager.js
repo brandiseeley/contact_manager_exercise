@@ -81,13 +81,13 @@ let ContactManager = (function() {
       }
     },
 
-    deleteContact(id) {
+    async deleteContact(id) {
       let requestObject = {
         method: 'DELETE',
       };
 
       try {
-        let response = fetch(DOMAIN + '/api/contacts/' + id, requestObject);
+        let response = await fetch(DOMAIN + '/api/contacts/' + id, requestObject);
         if (response.status === 204) {
           return {success: true, message: 'Successfully deleted contact'};
         } else {

@@ -47,19 +47,19 @@ const Validator = (function() {
     flashMessageContainer.classList.remove('hidden');
     if (responseData.success) {
       successMessage.textContent = responseData.message;
-      // display success message
     } else {
       errorMessage.textContent = responseData.message;
-      // display Error message
     }
 
     setTimeout(clearFlashMessage, 3000);
   }
 
   function clearFlashMessage() {
-    successMessage.textContent = '';
-    errorMessage.textContent = '';
     flashMessageContainer.classList.add('hidden');
+    setTimeout(() => {
+      successMessage.textContent = '';
+      errorMessage.textContent = '';
+    }, 750);
   }
 
   function init() {
@@ -232,14 +232,14 @@ const Manager = (function() {
     FormManager.hideContactForm();
   }
 
-  function editOrDelete(event) {
+  async function editOrDelete(event) {
     if (event.target.tagName !== 'BUTTON' ||
         !(event.target.classList.contains('edit') ||
         event.target.classList.contains('delete'))) return;
     let contactDiv = event.target.closest('div');
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
-      let responseData = ContactManager.deleteContact(id);
+      let responseData = await ContactManager.deleteContact(id);
       Validator.flashMessage(responseData);
       FormManager.hideContactForm();
       renderContacts();
