@@ -215,6 +215,7 @@ const Manager = (function() {
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
       ContactManager.deleteContact(id);
+      FormManager.hideContactForm();
       renderContacts();
     } else {
       FormManager.showEditContactForm(contactDiv);
