@@ -11,6 +11,9 @@ const Validator = (function() {
   let emailField;
   let phoneField;
   let fields;
+  let flashMessageContainer;
+  let errorMessage;
+  let successMessage;
 
   function validInputs() {
     for (let field of fields) {
@@ -40,7 +43,29 @@ const Validator = (function() {
     }
   }
 
+  function flashMessage(responseData) {
+    flashMessageContainer.classList.remove('hidden');
+    if (responseData.success) {
+      successMessage.textContent = responseData.message;
+      // display success message
+    } else {
+      errorMessage.textContent = responseData.message;
+      // display Error message
+    }
+
+    setTimeout(clearFlashMessage, 3000);
+  }
+
+  function clearFlashMessage() {
+    successMessage.textContent = '';
+    errorMessage.textContent = '';
+    flashMessageContainer.classList.add('hidden');
+  }
+
   function init() {
+    flashMessageContainer = document.querySelector('#flashMessage');
+    successMessage = document.querySelector('#successMessage');
+    errorMessage = document.querySelector('#errorMessage');
     nameField = document.querySelector('#contactForm input[name="full_name"]');
     emailField = document.querySelector('#contactForm input[name="email"]');
     phoneField = document.querySelector('#contactForm input[name="phone_number"]');
@@ -52,6 +77,8 @@ const Validator = (function() {
     showErrors,
     suppressError,
     clearAllErrors,
+    flashMessage,
+    clearFlashMessage,
     init,
   };
 })();
@@ -124,8 +151,6 @@ const FormManager = (function() {
     }, delayToShow);
   }
 
-  // Public Methods
-
   let showEditContactForm = (contactDiv) => { showContactForm('Edit Contact', contactDiv) };
   let showAddContactForm = () => { showContactForm('Add Contact') };
 
@@ -185,7 +210,6 @@ const Manager = (function() {
     }
 
     let contactDiv = document.querySelector('#contacts');
-    contactDiv.innerHTML = '';
     let html = Templater.contactSection(contacts);
     contactDiv.innerHTML = html;
   }
@@ -201,8 +225,8 @@ const Manager = (function() {
 
     let contactData = FormManager.parseForm(form);
 
-    // TODO: Do we need to capture the response anymore?
-    let newContactData = await ContactManager.addOrEditContact(contactData);
+    let responseData = await ContactManager.addOrEditContact(contactData);
+    Validator.flashMessage(responseData);
 
     renderContacts();
     FormManager.hideContactForm();
@@ -215,7 +239,8 @@ const Manager = (function() {
     let contactDiv = event.target.closest('div');
     let id = contactId(contactDiv);
     if (event.target.className === 'delete') {
-      ContactManager.deleteContact(id);
+      let responseData = ContactManager.deleteContact(id);
+      Validator.flashMessage(responseData);
       FormManager.hideContactForm();
       renderContacts();
     } else {

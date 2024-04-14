@@ -125,6 +125,14 @@ header, footer {
   text-align: center;
 }
 
+#errorMessage {
+  color: red;
+}
+
+#successMessage {
+  color: green;
+}
+
 .invalid {
   color: #820020;
 }
@@ -144,6 +152,10 @@ div.contact {
 
 div.email, div.phone_number {
   margin: 3px 0;
+}
+
+#flashMessage.hidden {
+  display: none;
 }
 
 #controls .tag {
@@ -175,7 +187,7 @@ div.email, div.phone_number {
 
 #controls, footer {
   background-color: lightgrey;
-  height: 40px;
+  /* height: 40px; */
 }
 
 #contacts {

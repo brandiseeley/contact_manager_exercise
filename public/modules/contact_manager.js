@@ -2,7 +2,7 @@ import { Utility } from './utilities.js';
 
 let ContactManager = (function() {
   const DOMAIN = 'http://localhost:3000';
-  // Private
+
   async function addContact(data) {
     let requestObject = {
       method: 'POST',
@@ -14,11 +14,14 @@ let ContactManager = (function() {
 
     try {
       let response = await fetch(DOMAIN + '/api/contacts/', requestObject);
-      let json = await response.json();
-      console.log('Add Contact Response: ', json);
-      return json;
+      if (response.status === 201) {
+        return {success: true, message: 'Successfully added contact.'};
+      } else {
+        return {success: false, message: 'Unable to add contact.'};
+      }
     } catch (error) {
       alert(error);
+      return {success: false, message: 'Something went wrong.'};
     }
   }
 
@@ -33,10 +36,14 @@ let ContactManager = (function() {
 
     try {
       let response = await fetch(DOMAIN + '/api/contacts/' + data.id, requestObject);
-      let json = await response.json();
-      console.log('Edit Contact Response: ', json);
+      if (response.status === 201) {
+        return {success: true, message: 'Contact successfully updated'};
+      } else {
+        return {success: false, message: "Couldn't update contact"};
+      }
     } catch (error) {
       alert(error);
+      return {success: false, message: "Something went wrong"};
     }
   }
 
@@ -68,9 +75,9 @@ let ContactManager = (function() {
     addOrEditContact(contactData) {
       if (contactData.id === '') {
         delete contactData.id;
-        addContact(contactData);
+        return addContact(contactData);
       } else {
-        editContact(contactData);
+        return editContact(contactData);
       }
     },
 
@@ -80,9 +87,15 @@ let ContactManager = (function() {
       };
 
       try {
-        fetch(DOMAIN + '/api/contacts/' + id, requestObject);
+        let response = fetch(DOMAIN + '/api/contacts/' + id, requestObject);
+        if (response.status === 204) {
+          return {success: true, message: 'Successfully deleted contact'};
+        } else {
+          return {success: false, message: "Couldn't delete contact"};
+        }
       } catch (error) {
         alert(error);
+        return {sucess: false, message: "Something went wrong"};
       }
     },
 
