@@ -54,6 +54,35 @@ const Validator = (function() {
   };
 })();
 
+const TagManager = (function() {
+  let filteringTags;
+
+  function activeTags() {
+    let tags = filteringTags.querySelectorAll('.tag');
+    return Array.from(tags).map(tag => {
+      return tag.firstChild.nodeValue.trim();
+    });
+  }
+
+  function addTag(tagName) {
+    let tags = activeTags();
+    if (tags.includes(tagName)) return;
+    tags.push(tagName);
+    let html = Templater.filteringTags(tags);
+    document.querySelector('#filteringTags').innerHTML = html;
+  }
+
+  function init() {
+    filteringTags = document.querySelector('#filteringTags');
+  }
+
+  return {
+    init,
+    addTag,
+    activeTags,
+  };
+})();
+
 const FormManager = (function() {
   let form;
   let formWrapper;
@@ -145,7 +174,7 @@ const Manager = (function() {
 
   async function renderContacts(contacts, query) {
     if (contacts === undefined) {
-      contacts = await ContactManager.allContacts();
+      contacts = await ContactManager.contacts(TagManager.activeTags());
     }
 
     contacts = { contacts };
@@ -196,20 +225,10 @@ const Manager = (function() {
     FormManager.hideContactForm();
   }
 
-  function renderFilteringTags(tag) {
-    let html = Templater.filteringTags(tag);
-    document.querySelector('#filteringTags').innerHTML = html;
-  }
-
-  async function filterByTag(event) {
+  async function addTag(event) {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
-      let tag = event.target.textContent.trim();
-      let contactsWithTag = await ContactManager.allContactsWithTag(tag);
-
-      // temp tags array
-      let tags = [tag];
-      renderContacts(contactsWithTag);
-      renderFilteringTags(tags);
+      TagManager.addTag(event.target.textContent.trim());
+      renderContacts();
     }
   }
 
@@ -237,7 +256,7 @@ const Manager = (function() {
     addOrEdit,
     editOrDelete,
     cancelAddOrEdit,
-    filterByTag,
+    addTag,
     filterByName,
     focusOnInput,
     controlsClick,
@@ -247,6 +266,7 @@ const Manager = (function() {
 document.addEventListener('DOMContentLoaded', () => {
   FormManager.init();
   Validator.init();
+  TagManager.init();
 
   let newContactForm = document.querySelector('#contactForm');
   let contacts = document.querySelector('#contacts');
@@ -262,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
   contacts.addEventListener('click', Manager.editOrDelete);
   addContactButton.addEventListener('click', FormManager.showAddContactForm);
   cancelButton.addEventListener('click', Manager.cancelAddOrEdit);
-  contacts.addEventListener('click', Manager.filterByTag);
+  contacts.addEventListener('click', Manager.addTag);
   searchForm.addEventListener('keyup', Manager.filterByName);
   controls.addEventListener('click', Manager.controlsClick);
 });

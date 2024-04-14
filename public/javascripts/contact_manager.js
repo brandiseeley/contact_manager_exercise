@@ -40,6 +40,14 @@ let ContactManager = (function() {
 
   // Public
   return {
+    contacts(activeTags) {
+      if (activeTags.length === 0) {
+        return this.allContacts();
+      }
+
+      return this.allContactsWithTags(activeTags);
+    },
+
     async allContacts() {
       try {
         let response = await fetch('http://localhost:3000/api/contacts');
@@ -76,13 +84,16 @@ let ContactManager = (function() {
       }
     },
 
-    async allContactsWithTag(tag) {
+    async allContactsWithTags(tags) {
       let contacts = await this.allContacts();
-      let filteredContacts = contacts.filter(contact => {
-        if (!contact.tags) return false;
-        return contact.tags.includes(tag);
-      });
-      return filteredContacts;
+      for (let tag of tags) {
+        if (contacts.length === 0) return contacts;
+        contacts = contacts.filter(contact => {
+          if (!contact.tags) return false;
+          return contact.tags.includes(tag);
+        });
+      }
+      return contacts;
     },
 
     async allContactsMatchingSearch(text) {
