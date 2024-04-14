@@ -21,6 +21,7 @@
     <div id="controls">
       <button id="add">Add Contact</button>
       <input id="search" type="text" placeholder="Search">
+      <div id="filteringTags"></div>
     </div>
 
     <div id="contactFormWrapper" class="hidden">
@@ -59,6 +60,10 @@
 </html>
 
 <!-- Templates -->
+<script id="filteringTagsTemplate" type="text/x-handlebars">
+  {{#each tags}}<button class="tag">{{this}}<span> X </span></button>{{/each}}
+</script>
+
 <script id="contactSectionTemplate" type="text/x-handlebars">
   {{#if contacts}}
   {{#each contacts}}

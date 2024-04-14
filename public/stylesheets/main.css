@@ -144,6 +144,16 @@ div.email, div.phone_number {
   margin: 3px 0;
 }
 
+#controls .tag {
+  border: 1px solid #550015;
+  background-color: #550015;
+  color: white;
+}
+
+#filteringTags {
+  display: inline;
+}
+
 #contactFormWrapper {
   z-index: 5;
   padding: 0;

@@ -1,6 +1,7 @@
 const Templater = (function() {
   let contactTemplate;
   let contactSectionTemplate;
+  let filteringTagsTemplate;
 
   function contact(object) {
     if (contactTemplate) return contactTemplate(object);
@@ -20,9 +21,18 @@ const Templater = (function() {
     return contactSectionTemplate(object);
   }
 
+  function filteringTags(tags) {
+    if (filteringTagsTemplate) return filteringTagsTemplate({ tags });
+
+    let html = document.querySelector('#filteringTagsTemplate').innerHTML;
+    filteringTagsTemplate = Handlebars.compile(html);
+    return filteringTagsTemplate({ tags });
+  }
+
   return {
     contact,
     contactSection,
+    filteringTags,
   };
 })();
 

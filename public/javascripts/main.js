@@ -11,9 +11,7 @@ const Validator = (function() {
   let fields;
 
   function validInputs() {
-    console.log(fields);
     for (let field of fields) {
-      console.log(field);
       if (!field.validity.valid) return false;
     }
     return true;
@@ -198,12 +196,28 @@ const Manager = (function() {
     FormManager.hideContactForm();
   }
 
+  function renderFilteringTags(tag) {
+    let html = Templater.filteringTags(tag);
+    document.querySelector('#filteringTags').innerHTML = html;
+  }
+
   async function filterByTag(event) {
     if (event.target.tagName === 'BUTTON' && event.target.className === 'tag') {
       let tag = event.target.textContent.trim();
       let contactsWithTag = await ContactManager.allContactsWithTag(tag);
+
+      // temp tags array
+      let tags = [tag];
       renderContacts(contactsWithTag);
+      renderFilteringTags(tags);
     }
+  }
+
+  function controlsClick(event) {
+    let button = event.target.closest('button');
+    if (!button || !button.classList.contains('tag')) return;
+    event.target.closest('button').remove();
+    renderContacts();
   }
 
   async function filterByName(event) {
@@ -213,7 +227,6 @@ const Manager = (function() {
   }
 
   function focusOnInput(event) {
-    console.log('Focusing on', event.target);
     if ((event.target.tagName === 'INPUT') && !event.target.validity.valid) {
       Validator.suppressError(event.target);
     }
@@ -227,6 +240,7 @@ const Manager = (function() {
     filterByTag,
     filterByName,
     focusOnInput,
+    controlsClick,
   };
 })();
 
@@ -239,6 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let addContactButton = document.querySelector('#add');
   let cancelButton = document.querySelector('#cancel');
   let searchForm = document.querySelector('#search');
+  let controls = document.querySelector('#controls');
 
   Manager.renderContacts();
 
@@ -249,4 +264,5 @@ document.addEventListener('DOMContentLoaded', () => {
   cancelButton.addEventListener('click', Manager.cancelAddOrEdit);
   contacts.addEventListener('click', Manager.filterByTag);
   searchForm.addEventListener('keyup', Manager.filterByName);
+  controls.addEventListener('click', Manager.controlsClick);
 });
