@@ -4,6 +4,7 @@
 /* eslint-disable indent */
 import { ContactManager } from '../modules/contact_manager.js';
 import { Templater } from '../modules/template_manager.js';
+import { Utility } from '../modules/utilities.js';
 
 const Validator = (function() {
   let nameField;
@@ -67,7 +68,7 @@ const TagManager = (function() {
 
   function addTag(tagName) {
     let tags = activeTags();
-    if (tags.includes(tagName)) return;
+    if (Utility.caseFreeIncludes(tags, tagName)) return;
     tags.push(tagName);
     let html = Templater.filteringTags(tags);
     document.querySelector('#filteringTags').innerHTML = html;

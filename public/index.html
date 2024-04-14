@@ -10,6 +10,7 @@
   <script src="/javascripts/handlebars.js"></script>
   <script src="/modules/contact_manager.js" type="module"></script>
   <script src="/modules/template_manager.js" type="module"></script>
+  <script src="/modules/utilities.js" type="module"></script>
   <script src="/javascripts/main.js" type="module"></script>
 </head>
 <body>
@@ -71,7 +72,7 @@
   {{/each}}
   {{else}}
     {{#if query}}
-      <h2>There are no contacts starting with <span id="query">{{query}}</span>.<h2>
+      <h2 id="noContactsMessage">There are no contacts starting with <span id="query">{{query}}</span>.<h2>
     {{else}}
       <h2>No Contacts</h2>
     {{/if}}
