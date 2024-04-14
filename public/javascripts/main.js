@@ -2,8 +2,8 @@
 /* eslint-disable max-statements */
 /* eslint-disable max-statements-per-line */
 /* eslint-disable indent */
-import { ContactManager } from './contact_manager.js';
-import { Templater } from './template_manager.js';
+import { ContactManager } from '../modules/contact_manager.js';
+import { Templater } from '../modules/template_manager.js';
 
 const Validator = (function() {
   let nameField;
