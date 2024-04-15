@@ -104,6 +104,9 @@ const FormManager = (function() {
     setEditId(id);
   }
 
+  let showEditContactForm = (contactDiv) => { showContactForm('Edit Contact', contactDiv) };
+  let showAddContactForm = () => { showContactForm('Add Contact') };
+
   function showContactForm(title, contactDiv) {
     Utility.scrollToTop();
     let delayToShow = 0;
@@ -117,9 +120,6 @@ const FormManager = (function() {
       show();
     }, delayToShow);
   }
-
-  let showEditContactForm = (contactDiv) => { showContactForm('Edit Contact', contactDiv) };
-  let showAddContactForm = () => { showContactForm('Add Contact') };
 
   function hideContactForm() {
     Utility.scrollToTop();
